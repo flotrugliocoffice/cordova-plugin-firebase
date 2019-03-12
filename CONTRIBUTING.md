@@ -59,7 +59,4 @@ We rely on the community to help test out fixes and enhancements to this plugin.
    * replace `<branch>` with the name of the branch used to create the PR
 3. `cordova prepare`
 
-For example, to test the fix made by PR [#832](https://github.com/arnesson/cordova-plugin-firebase/pull/832#issuecomment-420386486), you would use the url `https://github.com/briantq/cordova-plugin-firebase.git#revert-lazy-init` since `briantq` is the name of the user and `revert-lazy-init` is the name of the branch.  This information is available at the top of each PR.  For this specific PR, the following information is displayed:
-* briantq wants to merge 2 commits into arnesson:master from briantq:revert-lazy-init
-
 The last part being the vital information as it tells you exactly what to use in the url.

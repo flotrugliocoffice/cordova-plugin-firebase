@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/arnesson/cordova-plugin-firebase.svg?branch=master)](https://travis-ci.org/arnesson/cordova-plugin-firebase)
-
 # cordova-plugin-firebase
-This plugin brings push notifications, analytics, event tracking, crash reporting and more from Google Firebase to your Cordova project!  Android and iOS supported.
+
+This plugin is forked from https://arnesson.github.io/cordova-plugin-firebase/ and update the Token logic to the last FCM features.
+It brings push notifications, analytics, event tracking, crash reporting and more from Google Firebase to your Cordova project!  Android and iOS supported.
 
 ## Supported Cordova Versions
 - cordova: `>= 6`

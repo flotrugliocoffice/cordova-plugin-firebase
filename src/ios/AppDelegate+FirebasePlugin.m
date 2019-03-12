@@ -88,7 +88,9 @@
     }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
+    /* Deprecato, sembra che il sistema si autogestisca.
     [[FIRMessaging messaging] disconnect];
+    */
     self.applicationInBackground = @(YES);
     NSLog(@"Disconnected from FCM");
 }
@@ -97,24 +99,40 @@
     // Note that this callback will be fired everytime a new token is generated, including the first
     // time. So if you need to retrieve the token as soon as it is available this is where that
     // should be done.
-    NSString *refreshedToken = [[FIRInstanceID instanceID] token];
-    NSLog(@"InstanceID token: %@", refreshedToken);
-
+//    NSString *refreshedToken = [[FIRInstanceID instanceID] token];
+    [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult * _Nullable result, NSError * _Nullable error) {
+        NSString *refreshedToken = result.token;
+        NSLog(@"[tokenRefreshNotification] InstanceID token: %@", refreshedToken);
+        //[self connectToFcm];
+        [FirebasePlugin.firebasePlugin sendToken:refreshedToken];
+    }];
     // Connect to FCM since connection may have failed when attempted before having a token.
-    [self connectToFcm];
-    [FirebasePlugin.firebasePlugin sendToken:refreshedToken];
+
 }
 
 - (void)connectToFcm {
+
+    /* Deprecato, sembra che non sia più necessario connettersi ad fcm, ritorno solo il token
     [[FIRMessaging messaging] connectWithCompletion:^(NSError * _Nullable error) {
         if (error != nil) {
             NSLog(@"Unable to connect to FCM. %@", error);
         } else {
             NSLog(@"Connected to FCM.");
-            NSString *refreshedToken = [[FIRInstanceID instanceID] token];
-            NSLog(@"InstanceID token: %@", refreshedToken);
+            [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult * _Nullable result, NSError * _Nullable error) {
+                NSString *refreshedToken = result.token;
+                NSLog(@"InstanceID token: %@", refreshedToken);
+                [self connectToFcm];
+                [FirebasePlugin.firebasePlugin sendToken:refreshedToken];
+            }];
         }
     }];
+    */
+    [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult * _Nullable result, NSError * _Nullable error) {
+        NSString *refreshedToken = result.token;
+        NSLog(@"[connectToFcm] InstanceID token: %@", refreshedToken);
+        [FirebasePlugin.firebasePlugin sendToken:refreshedToken];
+    }];
+
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -154,6 +172,15 @@
     // This will allow us to handle FCM data-only push messages even if the permission for push
     // notifications is yet missing. This will only work when the app is in the foreground.
     [FirebasePlugin.firebasePlugin sendNotification:remoteMessage.appData];
+}
+-(void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
+    NSLog(@"Ricevo token: %@", fcmToken);
+    //Dalla documentazione - inoltra una notifica locale
+    NSDictionary *dataDict = [NSDictionary dictionaryWithObject:fcmToken forKey:@"token"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:
+     @"FCMToken" object:nil userInfo:dataDict];
+    //fine notifica.
+    [FirebasePlugin.firebasePlugin sendToken:fcmToken]; //FLT added
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
