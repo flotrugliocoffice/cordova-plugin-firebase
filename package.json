@@ -8,7 +8,7 @@
     "url": "https://github.com/flotrugliocoffice/cordova-plugin-firebase"
   },
   "name": "cordova-plugin-firebase",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Cordova plugin for Google Firebase forked from arnesson/cordova-plugin-firebase and updated to latest firebase needings.",
   "cordova": {
     "id": "cordova-plugin-firebase",
